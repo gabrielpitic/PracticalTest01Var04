@@ -1,7 +1,11 @@
 package ro.pub.cs.systems.eim.practicaltest01var04;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -27,6 +31,8 @@ public class PracticalTest01Var04MainActivity extends AppCompatActivity {
     private ButtonListener buttonListener = new ButtonListener();
     private ActivityResultLauncher<Intent> activityResultLauncher;
 
+    private BroadcastRecv broadcastRecv = null;
+
     class ButtonListener implements View.OnClickListener {
         @Override
         public void onClick(View view) {
@@ -43,6 +49,16 @@ public class PracticalTest01Var04MainActivity extends AppCompatActivity {
                 }
 
                 infoText.setText(info);
+
+                if (bottomCheckbox.isChecked() && topCheckbox.isChecked()) {
+                    Intent intent = new Intent(getApplicationContext(), PracticalTest01Var04Service.class);
+                    intent.putExtra("TOP_TEXT", topText.getText().toString());
+                    intent.putExtra("BOTTOM_TEXT", bottomText.getText().toString());
+
+                    Log.d("[MAIN]", "SERVICE STARTED");
+
+                    startService(intent);
+                }
             }
 
             if(view.getId() == R.id.navigateBtn) {
@@ -95,6 +111,34 @@ public class PracticalTest01Var04MainActivity extends AppCompatActivity {
                     }
                 }
         );
+
+        broadcastRecv = new BroadcastRecv();
+    }
+
+    @Override
+    protected void onPause() {
+        unregisterReceiver(broadcastRecv);
+        super.onPause();
+    }
+    @Override
+    protected void onResume() {
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction("TOP_TEXT_ACTION");
+        intentFilter.addAction("BOTTOM_TEXT_ACTION");
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            registerReceiver(broadcastRecv, intentFilter, Context.RECEIVER_NOT_EXPORTED);
+        }
+        super.onResume();
+    }
+
+    @Override
+    protected void onDestroy() {
+        Intent intent = new Intent(getApplicationContext(), PracticalTest01Var04Service.class);
+        stopService(intent);
+
+        Log.d("[MAIN]", "SERVICE STOPPED");
+
+        super.onDestroy();
     }
 
     @Override
