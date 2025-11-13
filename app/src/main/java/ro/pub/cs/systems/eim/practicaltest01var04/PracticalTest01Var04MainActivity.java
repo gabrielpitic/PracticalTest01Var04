@@ -1,12 +1,18 @@
 package ro.pub.cs.systems.eim.practicaltest01var04;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
@@ -17,8 +23,9 @@ public class PracticalTest01Var04MainActivity extends AppCompatActivity {
 
     private EditText topText, bottomText, infoText;
     private CheckBox topCheckbox, bottomCheckbox;
-    private Button dispInfoBtn;
+    private Button dispInfoBtn, navigateBtn;
     private ButtonListener buttonListener = new ButtonListener();
+    private ActivityResultLauncher<Intent> activityResultLauncher;
 
     class ButtonListener implements View.OnClickListener {
         @Override
@@ -36,6 +43,14 @@ public class PracticalTest01Var04MainActivity extends AppCompatActivity {
                 }
 
                 infoText.setText(info);
+            }
+
+            if(view.getId() == R.id.navigateBtn) {
+                Intent intent = new Intent(getApplicationContext(), PracticalTest01Var04SecondaryActivity.class);
+                intent.putExtra("TOP_TEXT", topText.getText().toString());
+                intent.putExtra("BOTTOM_TEXT", bottomText.getText().toString());
+
+                activityResultLauncher.launch(intent);
             }
         }
     }
@@ -59,8 +74,27 @@ public class PracticalTest01Var04MainActivity extends AppCompatActivity {
         bottomCheckbox = findViewById(R.id.bottomCheckbox);
 
         dispInfoBtn = findViewById(R.id.displayInfoBtn);
+        navigateBtn = findViewById(R.id.navigateBtn);
 
         dispInfoBtn.setOnClickListener(buttonListener);
+        navigateBtn.setOnClickListener(buttonListener);
+
+
+        activityResultLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                new ActivityResultCallback<ActivityResult>() {
+                    @Override
+                    public void onActivityResult(ActivityResult result) {
+                        int resCode = result.getResultCode();
+
+                        if(resCode == RESULT_OK) {
+                            Toast.makeText(PracticalTest01Var04MainActivity.this, "Result OK", Toast.LENGTH_LONG).show();
+                        } else if (resCode == RESULT_CANCELED) {
+                            Toast.makeText(PracticalTest01Var04MainActivity.this, "Result Cancel", Toast.LENGTH_LONG).show();
+                        }
+                    }
+                }
+        );
     }
 
     @Override
