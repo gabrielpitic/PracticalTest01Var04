@@ -7,6 +7,7 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -60,5 +61,32 @@ public class PracticalTest01Var04MainActivity extends AppCompatActivity {
         dispInfoBtn = findViewById(R.id.displayInfoBtn);
 
         dispInfoBtn.setOnClickListener(buttonListener);
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putString("TOP_TEXT", topText.getText().toString());
+        outState.putString("BOTTOM_TEXT", bottomText.getText().toString());
+        outState.putString("INFO_TEXT", infoText.getText().toString());
+    }
+
+    @Override
+    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+
+        if (savedInstanceState.containsKey("TOP_TEXT")) {
+            String topTextRestore = savedInstanceState.getString("TOP_TEXT");
+            topText.setText(topTextRestore);
+        }
+        if (savedInstanceState.containsKey("BOTTOM_TEXT")) {
+            String bottomTextRestore = savedInstanceState.getString("BOTTOM_TEXT");
+            bottomText.setText(bottomTextRestore);
+        }
+        if (savedInstanceState.containsKey("INFO_TEXT")) {
+            String infoTextRestore = savedInstanceState.getString("INFO_TEXT");
+            infoText.setText(infoTextRestore);
+        }
     }
 }

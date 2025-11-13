@@ -35,6 +35,7 @@
             android:ems="10"
             android:layout_row="0"
             android:layout_column="1"
+            android:saveEnabled="false"
             android:inputType="text"
             />
 
@@ -45,6 +46,7 @@
             android:ems="10"
             android:layout_row="1"
             android:layout_column="1"
+            android:saveEnabled="false"
             android:inputType="text"
             />
     </GridLayout>
@@ -63,6 +65,7 @@
         android:layout_height="wrap_content"
         android:ems="10"
         android:enabled="false"
+        android:saveEnabled="false"
         android:inputType="text"
         />
 
